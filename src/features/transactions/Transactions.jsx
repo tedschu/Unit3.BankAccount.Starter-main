@@ -11,6 +11,7 @@ export default function Transactions() {
   const balance = useSelector(state=>state.transactions.balance);
 
   const [amountStr, setAmountStr] = useState("0.00");
+  const [alertMessage, setAlertMessage] = useState("");
   const dispatch = useDispatch();
 
 
@@ -20,9 +21,15 @@ export default function Transactions() {
 
     // This changes depending on which button the user clicked to submit the form.
     // It will be either "deposit", "withdraw", or "transfer".
+    
     const action = e.nativeEvent.submitter.name;
 
     const amount = +amountStr;
+
+    if ((action != "deposit") && (+amountStr > balance)) {
+        setAlertMessage("Insufficient balance for this withdrawal");
+    } else {
+    
 
     // dispatch(action(amount));
 
@@ -34,16 +41,18 @@ export default function Transactions() {
       dispatch(transfer({amount}))
     }
 
+      setAlertMessage("");
     // TODO: Dispatch the appropriate transaction action based on `action`   DONE
-  };
+  }};
 
   return (
     <section className="transactions container">
       <h2>Transactions</h2>
       <figure>
-        <figcaption>Current Balance &nbsp;</figcaption>
-        <strong>${balance.toFixed(2)}</strong>
+        <figcaption>Current Balance &nbsp; </figcaption>
+        <strong>${balance.toFixed(2)}</strong> 
       </figure>
+      <h3>{alertMessage}</h3>
       <form onSubmit={onTransaction}>
         <div className="form-row">
           <label>
